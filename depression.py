@@ -2,7 +2,7 @@ import tensorflow as tf
 
 import keras 
 from keras.models import Sequential
-from keras.layers.core import Dense
+from keras.layers import Dense
 
 import keras.optimizers
 
@@ -16,7 +16,12 @@ from pandas import DataFrame as df
 np.random.seed(42)
 random_state = 42
 
-df = pd.read_csv('DEPRESSION_PROJECT.csv')
+#df = pd.read_csv('DEPRESSION_PROJECT.csv')
+
+# for when running in google colab
+from google.colab import drive
+drive.mount('/content/drive')
+df = pd.read_csv('/content/drive/MyDrive/datasets/DEPRESSION_PROJECT.csv')
 
 
 df.head()  # head method shows only first 5 rows
@@ -42,7 +47,12 @@ X.describe()
 x_=pd.get_dummies(X)
 
 #x_.to_csv('data.csv')
-X=pd.read_csv('data.csv')
+#X=pd.read_csv('data.csv')
+
+# for when running in google colab
+x_.to_csv('/content/drive/MyDrive/datasets/data.csv')
+X=pd.read_csv('/content/drive/MyDrive/datasets/data.csv')
+
 
 X.shape
 
