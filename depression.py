@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-import keras 
+import keras
 from keras.models import Sequential
 from keras.layers import Dense
 
@@ -8,20 +8,17 @@ import keras.optimizers
 
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import seaborn as sns # data visualization library  
-                                                                                                                                                                                                                                                                                                                            
+import seaborn as sns # data visualization library
+
 import matplotlib.pyplot as plt
 from pandas import DataFrame as df
 
 np.random.seed(42)
 random_state = 42
 
-#df = pd.read_csv('DEPRESSION_PROJECT.csv')
-
-# for when running in google colab
-from google.colab import drive
-drive.mount('/content/drive')
-df = pd.read_csv('/content/drive/MyDrive/datasets/DEPRESSION_PROJECT.csv')
+df = pd.read_csv('DEPRESSION_PROJECT.csv')
+# uncomment the line below for when running in google colab and comment the line above
+# df = pd.read_csv('/content/drive/MyDrive/datasets/DEPRESSION_PROJECT.csv')
 
 
 df.head()  # head method shows only first 5 rows
@@ -31,9 +28,9 @@ y = df['CLASS']    # DEPRESSION or OTHERS
 
 X = df.drop(['CLASS'], axis = 1)
 
-X.head()
+#X.head()
 
-sns.countplot(y, label="Count");  
+sns.countplot(df, x="CLASS");
 
 D, O = y.value_counts()
 print('Number of Depression: ',D)
@@ -42,16 +39,13 @@ print('Number of Others : ',O)
 
 X.describe()
 
-
-
 x_=pd.get_dummies(X)
 
-#x_.to_csv('data.csv')
-#X=pd.read_csv('data.csv')
-
-# for when running in google colab
-x_.to_csv('/content/drive/MyDrive/datasets/data.csv')
-X=pd.read_csv('/content/drive/MyDrive/datasets/data.csv')
+x_.to_csv('data.csv')
+X=pd.read_csv('data.csv')
+# uncomment the lines below for when running in google colab and comment the lines above
+# x_.to_csv('/content/drive/MyDrive/datasets/data.csv')
+# X=pd.read_csv('/content/drive/MyDrive/datasets/data.csv')
 
 
 X.shape
@@ -66,10 +60,10 @@ df.hist(bins=50, figsize=(16, 10));
 
 X.shape
 
-y
+#y
 
 
-df.head(10)
+df.head(10)  # show the first 10 rows
 
 df
 
@@ -83,8 +77,6 @@ scaled_df = pd.concat([pd.DataFrame(X_std, columns=X.columns), y], axis=1)
 scaled_df.head(10)
 
 scaled_df.to_csv('Scaled.csv')
-
-
 
 from sklearn.decomposition import PCA
 # feature extraction
@@ -130,25 +122,25 @@ from sklearn.metrics import accuracy_score, f1_score,confusion_matrix
 
 # split data train 50 % and test 50 %
 #X_train, X_test, y_train, y_test = train_test_split(X_std, y_, test_size=0.1, random_state=random_state)
-X_train, X_test, y_train, y_test = train_test_split(X_pca, y_, test_size=0.1, random_state=random_state)
+X_train, X_test, y_train, y_test = train_test_split(X_pca, y_, test_size=0.5, random_state=random_state)
 
 model = Sequential()
 model.add(Dense(16, activation='relu', input_dim=10))
 model.add(Dense(2, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 
-optimizer = keras.optimizers.SGD(lr=0.001,decay=0.0001, momentum=0.99)
+optimizer = keras.optimizers.legacy.SGD(lr=0.001,decay=0.0001, momentum=0.99)
 
 model.compile(loss='binary_crossentropy', optimizer=optimizer,metrics=['accuracy'])
 
 model.summary()
 model.save('Depression.h5')
-results = model.fit(X_train, y_train, epochs=80, batch_size=12,validation_split=0.3)
+results = model.fit(X_train, y_train, epochs=130, batch_size=12,validation_split=0.3)
 
 #Training the model
 scores = model.evaluate(X_train,y_train, verbose = 0)
 print(print("%s,%.2f%%" % ( model.metrics_names[1], scores[1] * 100)))
-#Testing of the model 
+#Testing of the model
 scores = model.evaluate(X_test,y_test, verbose = 0)
 print(print("%s,%.2f%%" % (model.metrics_names[1], scores[1] * 100)))
 
@@ -158,10 +150,9 @@ corrmat =df.corr()
 f, ax = plt.subplots(figsize=(30,20))
 sns.heatmap(corrmat, square=True, annot=True,linewidth=0.6, cmap='RdBu')
 
-
 #Summarize history for accuracy
 import matplotlib.pyplot as plt
-plt.plot(results.history['acc'])
+plt.plot(results.history['accuracy'])
 plt.title('tr_acc')
 plt.ylabel('tr_acc')
 plt.xlabel('tr_acc')
@@ -174,11 +165,11 @@ plt.xlabel('tr_epoch')
 plt.legend(['tr_loss'], loc='upper left')
 plt.show()
 
-plt.plot(results.history['val_acc'])
-plt.title('val_acc')
-plt.ylabel('val_acc')
-plt.xlabel('val_acc')
-plt.legend(['val_acc'], loc='upper left')
+plt.plot(results.history['val_accuracy'])
+plt.title('val_accuracy')
+plt.ylabel('val_accuracy')
+plt.xlabel('val_accuracy')
+plt.legend(['val_accuracy'], loc='upper left')
 plt.show()
 plt.plot(results.history['val_loss'])
 plt.title('val_loss')
@@ -188,8 +179,7 @@ plt.legend(['val_loss'], loc='upper left')
 plt.show()
 #model = load_model('depression.h5')
 
-plt.plot(results.history['acc'])
-plt.plot(results.history['val_acc'])
+plt.plot(results.history['accuracy'])
 plt.title('Model accuracy')
 plt.ylabel('Accuracy')
 plt.xlabel('Epoch')
@@ -225,3 +215,6 @@ sns.heatmap(cm, annot=True, fmt="d")
 
 from sklearn.metrics import f1_score
 f1_score(y_pred, y_test)
+
+
+
